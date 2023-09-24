@@ -1,0 +1,24 @@
+;precision;recall;f1-score;support
+Anoxybacillus_flavithermus;1.0;1.0;1.0;100.0
+Bacillus_altitudinis;0.9943820224719101;0.7866666666666666;0.8784119106699751;900.0
+Bacillus_aryabhattai;1.0;1.0;1.0;100.0
+Bacillus_atrophaeus;1.0;1.0;1.0;200.0
+Bacillus_berkeleyi;0.0;0.0;0.0;100.0
+Bacillus_cereus;1.0;0.905;0.9501312335958005;1000.0
+Bacillus_chungangenis;1.0;1.0;1.0;100.0
+Bacillus_clausii;1.0;1.0;1.0;100.0
+Bacillus_coagulans;1.0;1.0;1.0;100.0
+Bacillus_flexus;1.0;1.0;1.0;200.0
+Bacillus_licheniformis;0.8040201005025126;1.0;0.8913649025069639;800.0
+Bacillus_megaterium;1.0;1.0;1.0;600.0
+Bacillus_mycoides;1.0;1.0;1.0;100.0
+Bacillus_pumilus;0.951271186440678;0.9977777777777778;0.9739696312364425;1800.0
+Bacillus_simplex;1.0;1.0;1.0;600.0
+Bacillus_subtilis;0.5;1.0;0.6666666666666666;100.0
+Bacillus_thuringiensis;1.0;1.0;1.0;100.0
+Bacillus_weihenstephanensis;1.0;1.0;1.0;100.0
+E-Coli;1.0;1.0;1.0;100.0
+Geobacillus_subterraneus;1.0;1.0;1.0;200.0
+accuracy;0.9471621621621622;0.9471621621621622;0.9471621621621622;0.9471621621621622
+macro avg;0.9124836654707551;0.9344722222222221;0.9180272172337925;7400.0
+weighted avg;0.9460064913810742;0.9471621621621622;0.9423791727157584;7400.0
