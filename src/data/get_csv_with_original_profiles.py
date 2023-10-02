@@ -6,7 +6,7 @@ import os
 @click.command()
 @click.argument("input_path", type=click.Path())
 @click.argument("output_path", type=click.Path())
-def get_csv(input_path: str, output_path: str) -> None:
+def get_csv(input_path: str, output_path: str):
 
     """Собирает все профиля в одном csv файле. Изначально каждый профиль лежит
     в отдельном файле
@@ -22,7 +22,7 @@ def get_csv(input_path: str, output_path: str) -> None:
                               header=None)
 
     #считали один профиль для шаблона для колонок
-    t = pd.read_csv(os.path.join(input_path, '0a2c8dcb-9e19-47a4-9f35-0d7a5728eaa7'),
+    t = pd.read_csv(os.path.join(input_path, 'MS_profiles', '0a2c8dcb-9e19-47a4-9f35-0d7a5728eaa7'),
                     sep=';',
                     index_col=0,
                     header=None)
@@ -35,7 +35,7 @@ def get_csv(input_path: str, output_path: str) -> None:
 
     # считываем каждый файл
     for i in profiles_ID.index:
-        path = os.path.join(input_path, profiles_ID.at[i, 0])
+        path = os.path.join(input_path, 'MS_profiles', profiles_ID.at[i, 0])
         s = pd.read_csv(path, sep=';', index_col=0, header=None)
         s = s.T
         s['group'] = profiles_ID.at[i, 1]
@@ -45,7 +45,9 @@ def get_csv(input_path: str, output_path: str) -> None:
     # делаем красивые индексы
     original_profiles.index = profiles_ID.index
     original_profiles.to_csv(output_path, sep=';')
-    return None
+
+if __name__ == "__main__":
+    get_csv()
 
 
 # get_csv(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'raw', 'MS_profiles'),
