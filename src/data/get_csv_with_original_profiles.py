@@ -27,7 +27,8 @@ def get_csv(input_path: str, output_path: str) -> None:
                     index_col=0,
                     header=None)
     t = t.T
-    t[15001.0] = 0
+    t['group'] = 0
+    t['ID'] = 0
 
     # пустой словарь для удобного считывания
     original_profiles = pd.DataFrame({k: pd.Series(dtype=float) for k in t.columns})
@@ -37,8 +38,8 @@ def get_csv(input_path: str, output_path: str) -> None:
         path = os.path.join(input_path, profiles_ID.at[i, 0])
         s = pd.read_csv(path, sep=';', index_col=0, header=None)
         s = s.T
-        s[15001.0] = profiles_ID.at[i, 1]
-        s[15002.0] = profiles_ID.at[i, 2]
+        s['group'] = profiles_ID.at[i, 1]
+        s['ID'] = profiles_ID.at[i, 2]
         original_profiles = pd.concat([original_profiles, s])
 
     # делаем красивые индексы
