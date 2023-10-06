@@ -6,15 +6,15 @@ import numpy as np
 from tqdm.notebook import tqdm
 import click
 
-# @click.command()
-# @click.argument("input_path", type=click.Path())
-# @click.argument("output_path", type=click.Path())
-# @click.option("--noise", default=40, type=int)
-# @click.option("--amount-additional-profiles", default=200, type=int)
+@click.command()
+@click.argument("input_path", type=click.Path())
+@click.argument("output_path", type=click.Path())
+@click.option("--noise", default=40, type=int)
+@click.option("--amount-additional-profiles", default=200, type=int)
 def test_noise(input_path: str,
                     output_path: str,
                     noise: int = 40,
-                    amount_additional_profiles: int = 200) -> None:
+                    amount_additional_profiles: int = 200):
     """Делает зашумленный validset, таким же образом как и в trainloop: генирируем 12000(размерность
     профилей) слуйчайных величин из нормального распределения с нулевым средним и дисперсией, как в
     рассматриваемом векторе и этот ветор, домноженный на необходимый процент шума, прибавим к рассматриваемому
@@ -26,37 +26,34 @@ def test_noise(input_path: str,
     :return: None
     """
 
-    dtypes = [(f'{i}', 'f8') for i in range(12002)] + [('12002', 'U10'), ('12003', 'U10')]
-    original_profiles = np.getfromtxt(input_path, delimiter=';', dtype=dtypes)
+    # dtypes = [(f'{i}', 'f8') for i in range(12002)] + [('12002', 'U10'), ('12003', 'U10')]
+    # original_profiles = np.getfromtxt(input_path, delimiter=';', dtype=dtypes)
 
     #считали как DataFrame чтобы имена колонок
-    profiles_for_columns = pd.read_csv(input_path, sep=';')
-    columns = profiles_for_columns.columns
-
-    profile_columns = [f'col{i}' for i in range(12002)]
+    original_profiles = pd.read_csv(input_path, sep=';')
     noise_factor = noise/100
+    final = pd.DataFrame({k: pd.Series(dtype=float) for k in original_profiles.columns})
     for i in range(len(original_profiles)):
-
-        main = [row[name] for name in column_names]
-        main = original_profiles[i]
-        main[:12002] = main[:12002].astype(float)
-        for m, j in enumerate(range(amount_additional_profiles)):
-            tmp = main.copy()
-            tmp[:12002] = tmp[:12002] + np.random.normal(loc=0,
-                                                         scale=noise_factor * tmp[:12002],
-                                                         size=(len(tmp[:12002])))
+        main = original_profiles.loc[i].T
+        num = main[:'15000.0'].to_numpy(dtype=float)
+        final_tmp = np.array([num])
+        for j in range(amount_additional_profiles):
+            tmp = num.copy()
+            tmp = tmp + np.random.normal(loc=0,
+                                         scale=noise_factor * tmp,
+                                         size=(len(tmp)))
             tmp = abs(tmp)
-            np.place(tmp[:12002], tmp[:12002] > 1, 1)
-            if (m == 0) and (i == 0):
-                final = np.array([tmp])
-            else:
-                final = np.append(final, np.array([tmp]), axis=0)
-    profiles_inference = pd.DataFrame(final, columns=original_profiles_columns)
-    profiles_inference.to_csv(output_path, sep=';', header=True, index=True )
-    return None
+            np.place(tmp, tmp > 1, 1)
+            final_tmp = np.append(final_tmp, np.array([tmp]), axis=0)
+        final_tmp_pd = pd.DataFrame(final_tmp)
+        final_tmp_pd['group'] = main['group']
+        final_tmp_pd['ID'] = main['ID']
+        final_tmp_pd.columns = original_profiles.columns
+        final = pd.concat([final, final_tmp_pd], axis=0)
+    final.to_csv(output_path, sep=';', header=True, index=True)
 
-# if __name__ == "__main__":
-#     test_noise()
+if __name__ == "__main__":
+    test_noise()
 
-test_noise(os.path.join("..", "..", "data\\processed\\original_MS_profiles.csv"),
-           os.path.join("..", "..", "data\\processed\\set\\test_set_normal_noise_40%.csv"))
+# test_noise(os.path.join("..", "..", "data\\processed\\original_MS_profiles.csv"),
+#            os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"))
