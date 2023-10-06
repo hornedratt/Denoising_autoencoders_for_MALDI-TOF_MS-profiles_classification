@@ -26,10 +26,7 @@ def test_noise(input_path: str,
     :return: None
     """
 
-    # dtypes = [(f'{i}', 'f8') for i in range(12002)] + [('12002', 'U10'), ('12003', 'U10')]
-    # original_profiles = np.getfromtxt(input_path, delimiter=';', dtype=dtypes)
-
-    #считали как DataFrame чтобы имена колонок
+#   считали как DataFrame чтобы имена колонок
     original_profiles = pd.read_csv(input_path, sep=';')
     noise_factor = noise/100
     final = pd.DataFrame({k: pd.Series(dtype=float) for k in original_profiles.columns})
