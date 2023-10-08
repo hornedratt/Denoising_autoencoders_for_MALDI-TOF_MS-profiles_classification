@@ -44,7 +44,7 @@ def get_csv(input_path: str, output_path: str):
 
     # делаем красивые индексы
     original_profiles.index = profiles_ID.index
-    original_profiles.to_csv(output_path, sep=';')
+    original_profiles.to_csv(output_path, sep=';', index=False)
 
 if __name__ == "__main__":
     get_csv()
