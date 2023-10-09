@@ -1,16 +1,13 @@
-import os.path
-
 import pandas as pd
 import numpy as np
-
-from tqdm.notebook import tqdm
+import progressbar as pb
 import click
 
-# @click.command()
-# @click.argument("input_path", type=click.Path())
-# @click.argument("output_path", type=click.Path())
-# @click.option("--noise", default=40, type=int)
-# @click.option("--amount-additional-profiles", default=10, type=int)
+@click.command()
+@click.argument("input_path", type=click.Path())
+@click.argument("output_path", type=click.Path())
+@click.option("--noise", default=40, type=int)
+@click.option("--amount-additional-profiles", default=10, type=int)
 def test_noise(input_path: str,
                     output_path: str,
                     noise: int = 40,
@@ -30,11 +27,11 @@ def test_noise(input_path: str,
     original_profiles = pd.read_csv(input_path, sep=';')
     noise_factor = noise/100
     final = pd.DataFrame({k: pd.Series(dtype=float) for k in original_profiles.columns})
-    for i in range(len(original_profiles)):
+    for i in pb.progressbar(range(len(original_profiles))):
         main = original_profiles.loc[i].T
         num = main.drop('group').drop('ID').to_numpy(dtype=float)
         final_tmp = np.array([num])
-        for j in range(amount_additional_profiles):
+        for j in pb.progressbar(range(amount_additional_profiles)):
             tmp = num.copy()
             tmp = tmp + np.random.normal(loc=0,
                                          scale=noise_factor * tmp,
@@ -48,10 +45,9 @@ def test_noise(input_path: str,
         final_tmp_pd.columns = original_profiles.columns
         final = pd.concat([final, final_tmp_pd], axis=0)
     final.to_csv(output_path, sep=';', index=False)
-    return None
 
-# if __name__ == "__main__":
-#     test_noise()
+if __name__ == "__main__":
+    test_noise()
 
-test_noise(os.path.join("..", "..", "data\\processed\\original_MS_profiles.csv"),
-           os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"))
+# test_noise(os.path.join("..", "..", "data\\processed\\original_MS_profiles.csv"),
+#            os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"))
