@@ -1,4 +1,5 @@
 import pandas as pd
+import torch
 from typing import List, Union
 
 from torch import FloatTensor
@@ -21,7 +22,17 @@ class CustomDataSet(Dataset):
     def __getitem__(self, idx: int) -> tuple[Union[FloatTensor, str], Union[FloatTensor, str]]:
         return self.profile[idx, :], self.group[idx], self.name[idx]
 
-    # def cat (self, profile, group, name):
-    #     self.profile = torch.cat((self.profile, profile), 0)
-    #     self.group[len(self.group):] = group
-    #     self.name[len(self.name):] = name
+def collate_fn(batch_objs: List[Union[FloatTensor, str]]):
+    profiles = []
+    groups = []
+    IDs = []
+    for elem in batch_objs:
+        profile, group, ID = elem
+
+        profiles.append(profile)
+        groups.append(group)
+        IDs.append(ID)
+    profiles = torch.stack(profiles)
+    groups = torch.stack(groups)
+    IDs = torch.stack(IDs)
+    return profiles, groups, IDs

@@ -13,13 +13,15 @@ from src.data.CustomDataSet import CustomDataSet
 @click.argument("data_path", type=click.Path())
 @click.argument("model_path", type=click.Path())
 @click.argument("output_path_csv", type=click.Path())
-@click.argument("output_path_hist", type=click.Path())
+@click.argument("output_path_hist_g", type=click.Path())
+@click.argument("output_path_hist_i", type=click.Path())
 @click.option("--train_size", default=0.7, type=float)
 @click.option("--amount", default=10, type=int)
 def cross_valid(data_path: str,
                 model_path: str,
                 output_path_csv: str,
-                output_path_hist: str,
+                output_path_hist_g: str,
+                output_path_hist_i: str,
                 train_size: float=0.7,
                 amount: int=10):
     """Кросс-валидация
@@ -81,7 +83,7 @@ def cross_valid(data_path: str,
                        color_discrete_sequence=['indianred']
                        )
     fig.update_layout(showlegend=False)
-    fig.write_image(output_path_hist + '_group.png')
+    fig.write_image(output_path_hist_g)
 
     df = accuracies_ID.to_numpy()
     fig = px.histogram(df,
@@ -91,7 +93,7 @@ def cross_valid(data_path: str,
                        color_discrete_sequence=['indianred']
                        )
     fig.update_layout(showlegend=False)
-    fig.write_image(output_path_hist + '_ID.png')
+    fig.write_image(output_path_hist_i)
     # return None
 if __name__ == "__main__":
     cross_valid()

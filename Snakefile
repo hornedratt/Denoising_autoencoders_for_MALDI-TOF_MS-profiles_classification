@@ -3,7 +3,8 @@ rule all:
         "data\\processed\\original_MS_profiles.csv",
         "data\\processed\\sets\\test_set_normal_noise_40%.csv",
         "reports\\cross_valid_40%_result.csv",
-        "reports\\figures\\cross_valid_40%_result"
+        "reports\\figures\\cross_valid_40%_result_group.png",
+        "reports\\figures\\cross_valid_40%_result_ID.png"
 rule make_original_profiles_csv:
     input:
         "data\\raw"
@@ -24,6 +25,7 @@ rule cross_validation:
         "models\\old_models\\DAE_norm_noise_40%.pkl"
     output:
         "reports\\cross_valid_40%_result.csv",
-        "reports\\figures\\cross_valid_40%_result"
+        "reports\\figures\\cross_valid_40%_result_group.png",
+        "reports\\figures\\cross_valid_40%_result_ID.png"
     shell:
         "python -m src.models.cross_valid {input} {output}"
