@@ -1,5 +1,6 @@
 import torch
 import pandas as pd
+import numpy as np
 import click
 import progressbar as pb
 import os
@@ -9,11 +10,18 @@ from torch.utils.data import DataLoader
 
 from src.models.VanillaAutoencoder import VanillaAutoencoder
 from src.data.CustomDataSet import CustomDataSet
+from src.data.CustomDataSet import collate_fn
+from src.visualization.figure_accuracy_per_epoch import losses_plot
 
-def train_one_set(n_epochs: int = 50,
+def train_one_set(output_path_model: str,
+                  output_path_figure: str,
+                  n_epochs: int = 50,
                   lr: float = 0.001,
                   noise_factor: float = 40,
-                  L=F.mse_loss) -> None:
+                  batch_size: int=64,
+                  set_size: int=2500,
+                  train_size: float=0.7,
+                  L=F.mse_loss):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     noise_factor = noise_factor / 100
@@ -23,68 +31,72 @@ def train_one_set(n_epochs: int = 50,
     train_losses = []
     val_losses = []
 
-    train_set = pd.read_csv(os.path.join('..', '..', 'data\\processed\\original_MS_profiles.csv'), sep=';')
+    data_set = pd.read_csv(os.path.join('..', '..', 'data\\processed\\original_MS_profiles.csv'), sep=';')
+
+    train_set_size = int(set_size * train_size / len(data_set.index))
+    valid_set_size = int(set_size * (1 - train_size) / len(data_set.index))
+
+    train_set = pd.concat([data_set] * (train_set_size + 1), axis=0, ignore_index=True)
+    valid_set = pd.concat([data_set] * (valid_set_size + 1), axis=0, ignore_index=True)
+
     train_set = CustomDataSet(train_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
                               train_set['group'],
                               train_set['ID'])
-    train_loader = DataLoader(train_set, batch1)
-    embaddings = torch.Tensor()
-    truth = torch.Tensor()
-    pred = torch.Tensor()
+
+    train_loader = DataLoader(train_set,
+                              batch_size=batch_size,
+                              collate_fn=collate_fn,
+                              shuffle=False)
+
+    valid_set = CustomDataSet(valid_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
+                              valid_set['group'],
+                              valid_set['ID'])
+
+    valid_loader = DataLoader(valid_set,
+                               batch_size=batch_size,
+                               collate_fn=collate_fn,
+                               shuffle=False)
+
+    train_losses_per_epoch = []
+    val_losses_per_epoch = []
 
     for epoch in pb.progressbar(range(n_epochs)):
         autoencoder.train()
-        train_losses_per_epoch = []
 
-        for X_batch in train_data:
-            noise = X_batch['profile'] + \
-                    torch.FloatTensor(np.random.normal(loc=0.0, \
-                                                       scale=noise_factor * X_batch['profile'],
-                                                       size=list(X_batch['profile'].size())))  # шумим
-            noise = torch.abs(noise)
-            y = torch.ones(list(X_batch['profile'].size()))
-            noise = torch.where(noise < 1, noise, y)
-
-            X_batch['profile'] = X_batch['profile'].to(device)  # чистые векторы
-            noise = noise.to(device)
+        for X_batch in train_loader:
+            orig_profile, noise_profile, group, id = X_batch
+            orig_profile = orig_profile.to(device)
+            noise_profile = noise_profile.to(device)
 
             optimizer.zero_grad()
-            reconstructed, embadding = self.autoencoder.forward(noise)  # скармливаем шум
-            loss = L(reconstructed, X_batch['profile'])  # сравниваем с читыми
+            reconstructed, embadding = autoencoder.forward(noise_profile)  # скармливаем шум
+            loss = L(reconstructed, orig_profile)  # сравниваем с читыми
             loss.backward()
             optimizer.step()
             train_losses_per_epoch.append(loss.item())
 
         train_losses.append(np.mean(train_losses_per_epoch))
-        self.train_losses = train_losses
 
-        self.autoencoder.eval()
-        val_losses_per_epoch = []
+        autoencoder.eval()
         with torch.no_grad():
-            for X_batch in self.train_data:
-                noise = X_batch['profile'] + \
-                        torch.FloatTensor(np.random.normal(loc=0.0, \
-                                                           scale=noise_factor * X_batch['profile'],
-                                                           size=list(X_batch['profile'].size())))  # шумим
-                noise = torch.abs(noise)
-                y = torch.ones(list(X_batch['profile'].size()))
-                noise = torch.where(noise < 1, noise, y)
+            for X_batch in valid_loader:
+                orig_profile, noise_profile, group, id = X_batch
+                orig_profile = orig_profile.to(device)
+                noise_profile = noise_profile.to(device)
 
-                noise = noise.to(device)
-                X_batch['profile'] = X_batch['profile'].to(device)
-
-                reconstructed, embadding = self.autoencoder(noise)
-                loss = L(reconstructed, X_batch['profile'])
+                reconstructed, embadding = autoencoder(noise_profile)
+                loss = L(reconstructed, orig_profile)
                 val_losses_per_epoch.append(loss.item())
 
-                embadding = embadding.to('cpu')
-                reconstructed = reconstructed.to('cpu')
-                X_batch['profile'] = X_batch['profile'].to('cpu')
-
-                self.embaddings = customdataset(embadding, X_batch['group'].copy(), X_batch['ID'].copy())
-                self.truth = customdataset(X_batch['profile'], X_batch['group'].copy(), X_batch['ID'].copy())
-                self.pred = customdataset(reconstructed, X_batch['group'].copy(), X_batch['ID'].copy())
-
         val_losses.append(np.mean(val_losses_per_epoch))
-        self.val_losses = val_losses
-        return None
+
+    torch.save(autoencoder.encoder, output_path_model)
+    losses_plot(train_losses=train_losses,
+                    valid_losses=val_losses,
+                    output_path=output_path_figure)
+    return None
+
+
+train_one_set(output_path_model=os.path.join('..', '..', 'models', f'DAE_norm_noise_{40}%.pkl'),
+              output_path_figure=os.path.join('..', '..', 'reports', 'figures', f'DAE_norm_noise_{40}%.png'))
+

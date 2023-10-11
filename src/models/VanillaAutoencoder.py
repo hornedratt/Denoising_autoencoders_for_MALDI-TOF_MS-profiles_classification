@@ -25,6 +25,6 @@ class VanillaAutoencoder(nn.Module):
 
     def forward(self, x: FloatTensor) -> tuple[FloatTensor, FloatTensor]:
         x = self.encoder(x)
-        embadding = x.copy()
+        embadding = x.clone()
         reconstruction = self.decoder(x)
         return reconstruction, embadding
