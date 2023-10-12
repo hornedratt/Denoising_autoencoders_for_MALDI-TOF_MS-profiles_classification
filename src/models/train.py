@@ -13,6 +13,7 @@ from src.data.CustomDataSet import CustomDataSet
 from src.data.CustomDataSet import collate_fn
 from src.visualization.figure_accuracy_per_epoch import losses_plot
 
+
 def train_one_set(output_path_model: str,
                   output_path_figure: str,
                   n_epochs: int = 50,
@@ -22,6 +23,20 @@ def train_one_set(output_path_model: str,
                   set_size: int=2500,
                   train_size: float=0.7,
                   L=F.mse_loss):
+    """Тренировка одного denoising автоенкодера с определенным уровнем шума.
+     Каждый батч состоит из оригинальных профилей и в collate_fn к нему добавляется
+     шум, после чего и чистый, и зашумленный батчи отдаются модели
+    :param output_path_model: путь, куда сохраним готовую модельку
+    :param output_path_figure: путь, куда сохраним графики с лоссами на каждой эпохе
+    :param n_epochs: количество эпох
+    :param lr: learning rate для Adam optimizer
+    :param noise_factor: уровень шума в профилях для тренировки
+    :param batch_size: размер батча
+    :param set_size: общее количество профилей, которое скормим модели
+    :param train_size: часть от объема из предыдущего арга, которое пойдет на тренировку
+    :param L: лосс-функция
+    """
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     noise_factor = noise_factor / 100
@@ -36,6 +51,9 @@ def train_one_set(output_path_model: str,
     train_set_size = int(set_size * train_size / len(data_set.index))
     valid_set_size = int(set_size * (1 - train_size) / len(data_set.index))
 
+#   делаем train/valid выборки тем, что дублируем строки из оригинального df до нужного размера
+#   после, окно размером с batch_size будет скользить по полученным наборам, случайно зашумлять их,
+#   и отдавать на вход модели
     train_set = pd.concat([data_set] * (train_set_size + 1), axis=0, ignore_index=True)
     valid_set = pd.concat([data_set] * (valid_set_size + 1), axis=0, ignore_index=True)
 
@@ -45,7 +63,7 @@ def train_one_set(output_path_model: str,
 
     train_loader = DataLoader(train_set,
                               batch_size=batch_size,
-                              collate_fn=collate_fn,
+                              collate_fn=lambda batch: collate_fn(batch, noise_factor=noise_factor),
                               shuffle=False)
 
     valid_set = CustomDataSet(valid_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
@@ -54,7 +72,7 @@ def train_one_set(output_path_model: str,
 
     valid_loader = DataLoader(valid_set,
                                batch_size=batch_size,
-                               collate_fn=collate_fn,
+                               collate_fn=lambda batch: collate_fn(batch, noise_factor=noise_factor),
                                shuffle=False)
 
     train_losses_per_epoch = []

@@ -33,7 +33,6 @@ def cross_valid(data_path: str,
     :param train_size: объем выборки для тренировки
     :param amoumt: количество итераций в кросс-валидации (сколько раз тренируем новую
      модель классификации)
-    :return: None
     """
     device = torch.device('cpu')
 

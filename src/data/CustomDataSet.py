@@ -23,9 +23,12 @@ class CustomDataSet(Dataset):
     def __getitem__(self, idx: int) -> tuple[Union[FloatTensor, str], Union[FloatTensor, str]]:
         return self.profile[idx, :], self.group[idx], self.name[idx]
 
-def collate_fn(batch_objs: List[Union[FloatTensor, str]]):
-    noise_factor = 40
-
+def collate_fn(batch_objs: List[Union[FloatTensor, str]], noise_factor: float):
+    """collate_fn для denoising автоенкодера, создает зашусленный батч и возвращает его с чистым
+    :param batch_objs: сам батч
+    :param noise_factor: уровень генирируемого шума
+    :return: чистый батч, зашумленный батч, метки группы, метки штамма
+    """
     profiles_noise = []
     profiles = []
     groups = []
