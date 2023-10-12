@@ -13,8 +13,16 @@ from src.data.CustomDataSet import CustomDataSet
 from src.data.CustomDataSet import collate_fn
 from src.visualization.figure_accuracy_per_epoch import losses_plot
 
-
-def train_one_set(output_path_model: str,
+@click.command()
+@click.argument("output_path_model", type=click.Path())
+@click.argument("output_path_figure", type=click.Path())
+@click.option("--n_epochs", default=50, type=int)
+@click.option("--lr", default=0.001, type=float)
+@click.option("--noise_factor", default=40, type=float)
+@click.option("--batch_size", default=64, type=int)
+@click.option("--set_size", default=2500, type=int)
+@click.option("--train_size", default=0.7, type=float)
+def train_autoencoder(output_path_model: str,
                   output_path_figure: str,
                   n_epochs: int = 50,
                   lr: float = 0.001,
@@ -46,7 +54,7 @@ def train_one_set(output_path_model: str,
     train_losses = []
     val_losses = []
 
-    data_set = pd.read_csv(os.path.join('..', '..', 'data\\processed\\original_MS_profiles.csv'), sep=';')
+    data_set = pd.read_csv('data\\processed\\original_MS_profiles.csv', sep=';')
 
     train_set_size = int(set_size * train_size / len(data_set.index))
     valid_set_size = int(set_size * (1 - train_size) / len(data_set.index))
@@ -112,9 +120,10 @@ def train_one_set(output_path_model: str,
     losses_plot(train_losses=train_losses,
                     valid_losses=val_losses,
                     output_path=output_path_figure)
-    return None
 
+if __name__ == "__main__":
+    train_autoencoder()
 
-train_one_set(output_path_model=os.path.join('..', '..', 'models', f'DAE_norm_noise_{40}%.pkl'),
-              output_path_figure=os.path.join('..', '..', 'reports', 'figures', f'DAE_norm_noise_{40}%.png'))
+# train_one_set(output_path_model=os.path.join('..', '..', 'models', f'DAE_norm_noise_{40}%.pkl'),
+#               output_path_figure=os.path.join('..', '..', 'reports', 'figures', f'DAE_norm_noise_{40}%.png'))
 
