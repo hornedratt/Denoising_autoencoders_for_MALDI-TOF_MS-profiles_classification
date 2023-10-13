@@ -31,8 +31,8 @@ rule train_autoencoder:
         "python -m src.models.train {output}"
 rule heat_map:
     input:
-        "data\\processed\\sets\\test_set_normal_noise_40%.csv",
-        "models\\DAE_norm_noise_40%.pkl"
+        "models\\DAE_norm_noise_40%.pkl",
+        "data\\processed\\sets\\test_set_normal_noise_40%.csv"
     output:
         "reports\\figures\\heat_map_group_40%.png",
         "reports\\figures\\heat_map_ID_40%.png"

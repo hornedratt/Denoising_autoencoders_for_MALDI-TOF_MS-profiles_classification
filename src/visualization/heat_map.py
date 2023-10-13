@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import click
 
 from src.data.CustomDataSet import CustomDataSet
@@ -38,11 +38,13 @@ def heat_map(model_path: str,
     autoencoder = torch.load(model_path).to(device)
     valid_set.profile = autoencoder(valid_set.profile)
 
-    embaddings_heat = pd.DataFrame(valid_set.profile.numpy(), dtype=float)
+    embaddings_heat = pd.DataFrame(valid_set.profile.detach().numpy(), dtype=float)
     embaddings_heat['group'] = valid_set.group
     embaddings_heat['ID'] = valid_set.name
-    for attribute in ['group', 'ID']:
-        embaddings_heat_mean = embaddings_heat.groupby(attribute).mean()
+    attributes = ['group', 'ID']
+    for attribute in attributes:
+        attribute_inversion = [atrr for atrr in attributes if atrr != attribute]
+        embaddings_heat_mean = embaddings_heat.drop(attribute_inversion[0], axis=1).groupby([attribute]).mean()
         heat_map = np.zeros((len(embaddings_heat_mean.index), len(embaddings_heat_mean.index)))
         heat_map = pd.DataFrame(heat_map, index=embaddings_heat_mean.index,
                                 columns=embaddings_heat_mean.index, dtype=float)
@@ -67,7 +69,7 @@ def heat_map(model_path: str,
                 heat_map.at[i, j] = e
 
         heat_map_t = heat_map.values.copy()
-        for i in range(len(heat_map['Bacillus_licheniformis'])):
+        for i in range(len(heat_map[heat_map.columns[0]])):
             heat_map_t[i, i] = 0
         heat_map_t = heat_map_t.transpose()
         heat_map.loc[:, :] = heat_map.values + heat_map_t
@@ -78,6 +80,8 @@ def heat_map(model_path: str,
         ax.set_yticks(np.arange(heat_map.shape[0]))
         ax.set_xticklabels(heat_map)
         ax.set_yticklabels(heat_map)
+        im = ax.imshow(heat_map)
+        ax.set_title("карта расстояний между группами культур")
         plt.setp(ax.get_xticklabels(), rotation=90, ha="right", rotation_mode="anchor")
         if attribute == 'group':
             ax.set_title("карта расстояний между группами культур")
@@ -89,3 +93,9 @@ def heat_map(model_path: str,
 
 if __name__ == "__main__":
     heat_map()
+
+# heat_map("..\\..\\models\\DAE_norm_noise_40%.pkl",
+#         "..\\..\\data\\processed\\sets\\test_set_normal_noise_40%.csv",
+#         "..\\..\\reports\\figures\\heat_map_group_40%.png",
+#         "..\\..\\reports\\figures\\heat_map_ID_40%.png"
+#          )
