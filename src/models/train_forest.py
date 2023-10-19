@@ -22,6 +22,18 @@ def train_forest(model_path: str,
                  output_path_group_rep: str,
                  output_path_id: str,
                  output_path_id_rep: str):
+    """Тренировка и тест 2-х случайных лесов: один по классифицирует погруппам, другой
+    по штаммам
+    :param model_path: путь до кодера,который будем использовать для получения скрытых
+    состояний
+    :param data_path: путь до сэта на котором будем тренировать случайный лес
+    :param output_path_group: путь куда сохраним готовый лес, классифицирующий по группам
+    :param output_path_group_rep: путь куда сохраним отчет в формате csv о тесте леса,
+     классифицирующего по группам
+    :param output_path_id: путь куда сохраним готовый лес, классифицирующий по штаммам
+    :param output_path_id_rep: путь куда сохраним отчет в формате csv о тесте  леса,
+     классифицирующего по щтаммам
+    """
     device = torch.device('cpu')
     train_set = pd.read_csv(data_path, sep=';')
     train_set = CustomDataSet(train_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),

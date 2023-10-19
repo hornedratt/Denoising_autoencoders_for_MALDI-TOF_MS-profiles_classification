@@ -8,16 +8,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import plotly.express as px
+import plotly.io as pio
+
 
 from src.data.CustomDataSet import CustomDataSet
-@click.command()
-@click.argument("data_path", type=click.Path())
-@click.argument("model_path", type=click.Path())
-@click.argument("output_path_csv", type=click.Path())
-@click.argument("output_path_hist_g", type=click.Path())
-@click.argument("output_path_hist_i", type=click.Path())
-@click.option("--train_size", default=0.7, type=float)
-@click.option("--amount", default=10, type=int)
+# @click.command()
+# @click.argument("data_path", type=click.Path())
+# @click.argument("model_path", type=click.Path())
+# @click.argument("output_path_csv", type=click.Path())
+# @click.argument("output_path_hist_g", type=click.Path())
+# @click.argument("output_path_hist_i", type=click.Path())
+# @click.option("--train_size", default=0.7, type=float)
+# @click.option("--amount", default=10, type=int)
 def cross_valid(data_path: str,
                 model_path: str,
                 output_path_csv: str,
@@ -83,7 +85,9 @@ def cross_valid(data_path: str,
                        color_discrete_sequence=['indianred']
                        )
     fig.update_layout(showlegend=False)
-    fig.write_image(output_path_hist_g)
+    img_bytes = pio.to_image(fig, format="png")
+    with open(output_path_hist_g, "wb") as f:
+        f.write(img_bytes)
 
     df = accuracies_ID.to_numpy()
     fig = px.histogram(df,
@@ -93,11 +97,18 @@ def cross_valid(data_path: str,
                        color_discrete_sequence=['indianred']
                        )
     fig.update_layout(showlegend=False)
-    fig.write_image(output_path_hist_i)
-#     return None
-# cross_valid(os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"),
-#             os.path.join("..", "..", "models\\DAE_norm_noise_40%.pkl"),
-#             os.path.join("..", "..", "reports\\cross_valid_40%_result.csv"),
-#             os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result_group.png"),
-#             os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result_id.png"),
-#             )
+    img_bytes = pio.to_image(fig, format="png")
+    with open(output_path_hist_i, "wb") as f:
+        f.write(img_bytes)
+
+    return None
+
+# if __name__ == "__main__":
+#     cross_valid()
+
+cross_valid(os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"),
+            os.path.join("..", "..", "models\\DAE_norm_noise_40%.pkl"),
+            os.path.join("..", "..", "reports\\cross_valid_40%_result.csv"),
+            os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result_group.png"),
+            os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result_id.png")
+            )
