@@ -2,6 +2,7 @@ import torch
 import pandas as pd
 import click
 import progressbar as pb
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -93,8 +94,10 @@ def cross_valid(data_path: str,
                        )
     fig.update_layout(showlegend=False)
     fig.write_image(output_path_hist_i)
-    # return None
+#     return None
 # cross_valid(os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"),
-#             os.path.join("..", "..", "models\\old_models\\DAE_norm_noise_40%.pkl"),
+#             os.path.join("..", "..", "models\\DAE_norm_noise_40%.pkl"),
 #             os.path.join("..", "..", "reports\\cross_valid_40%_result.csv"),
-#             os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result"))
+#             os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result_group.png"),
+#             os.path.join("..", "..", "reports\\figures\\cross_valid_40%_result_id.png"),
+#             )

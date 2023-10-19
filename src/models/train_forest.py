@@ -27,11 +27,12 @@ def train_forest(model_path: str,
     train_set = CustomDataSet(train_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
                               train_set['group'],
                               train_set['ID'])
+    size = len(train_set)
 
     autoencoder = torch.load(model_path).to(device)
-    train_set.profile = autoencoder(train_set.profile).numpy()
+    train_set.profile = autoencoder(train_set.profile).detach().numpy()
 
-    idx_train, idx_test = train_test_split(list(range(len(train_set))), train_size=0.7)
+    idx_train, idx_test = train_test_split(list(range(size)), train_size=0.7)
     x_train, y_train_group, y_train_id = train_set.subset(idx_train)
     x_test, y_test_group, y_test_id = train_set.subset(idx_test)
 
