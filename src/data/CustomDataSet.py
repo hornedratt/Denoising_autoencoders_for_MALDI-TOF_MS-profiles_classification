@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 class CustomDataSet(Dataset):
     def __init__(self,
-                 profile: pd.DataFrame,
+                 profile: np.array,
                  group: pd.DataFrame,
                  name: pd.DataFrame):
         self.profile = FloatTensor(profile)
@@ -22,6 +22,12 @@ class CustomDataSet(Dataset):
 
     def __getitem__(self, idx: int) -> tuple[Union[FloatTensor, str], Union[FloatTensor, str]]:
         return self.profile[idx, :], self.group[idx], self.name[idx]
+
+    def subset(self, indices: list) -> tuple[np.array, pd.Series, pd.Series]:
+        profiles = self.profile[indices, :]
+        groups = self.group.iloc[indices].reset_index(drop=True)
+        names = self.name.iloc[indices].reset_index(drop=True)
+        return profiles, groups, names
 
 def collate_fn(batch_objs: List[Union[FloatTensor, str]], noise_factor: float):
     """collate_fn для denoising автоенкодера, создает зашусленный батч и возвращает его с чистым

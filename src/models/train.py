@@ -124,6 +124,6 @@ def train_autoencoder(output_path_model: str,
 if __name__ == "__main__":
     train_autoencoder()
 
-# train_one_set(output_path_model=os.path.join('..', '..', 'models', f'DAE_norm_noise_{40}%.pkl'),
+# train_autoencoder(output_path_model=os.path.join('..', '..', 'models', f'DAE_norm_noise_{40}%.pkl'),
 #               output_path_figure=os.path.join('..', '..', 'reports', 'figures', f'DAE_norm_noise_{40}%.png'))
 

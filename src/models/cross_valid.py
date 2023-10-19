@@ -53,14 +53,14 @@ def cross_valid(data_path: str,
         classifier_ID = RandomForestClassifier()
 
 #       тренируем очередной лес
-        embaddings, group, id = valid_set[train_idx]
+        embaddings, group, id = valid_set.subset(train_idx)
         with torch.no_grad():
             embaddings = embaddings.numpy()
         classifier_group.fit(embaddings, group)
         classifier_ID.fit(embaddings, id)
 
 #       тестируем полученный лес
-        embaddings, group, id = valid_set[test_idx]
+        embaddings, group, id = valid_set.subset(test_idx)
         with torch.no_grad():
             embaddings = embaddings.numpy()
         pred_ID = classifier_ID.predict(embaddings)
@@ -94,8 +94,6 @@ def cross_valid(data_path: str,
     fig.update_layout(showlegend=False)
     fig.write_image(output_path_hist_i)
     # return None
-if __name__ == "__main__":
-    cross_valid()
 # cross_valid(os.path.join("..", "..", "data\\processed\\sets\\test_set_normal_noise_40%.csv"),
 #             os.path.join("..", "..", "models\\old_models\\DAE_norm_noise_40%.pkl"),
 #             os.path.join("..", "..", "reports\\cross_valid_40%_result.csv"),

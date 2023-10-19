@@ -8,7 +8,11 @@ rule all:
         'models\\DAE_norm_noise_40%.pkl',
         'reports\\figures\\DAE_norm_noise_40%.png',
         "reports\\figures\\heat_map_group_40%.png",
-        "reports\\figures\\heat_map_ID_40%.png"
+        "reports\\figures\\heat_map_ID_40%.png",
+        "models\\forest_40%_group",
+        "reports\\forest_40%_group.csv",
+        "models\\forest_40%_ID",
+        "reports\\forest_40%_ID.csv"
 rule make_original_profiles_csv:
     input:
         "data\\raw"
@@ -28,7 +32,7 @@ rule train_autoencoder:
         'models\\DAE_norm_noise_40%.pkl',
         'reports\\figures\\DAE_norm_noise_40%.png'
     shell:
-        "python -m src.models.train {output}"
+        "python -m src.models.train {output} --n_epochs 2"
 rule heat_map:
     input:
         "models\\DAE_norm_noise_40%.pkl",
@@ -38,10 +42,21 @@ rule heat_map:
         "reports\\figures\\heat_map_ID_40%.png"
     shell:
         "python -m src.visualization.heat_map {input} {output}"
+rule train_forest:
+    input:
+        "models\\DAE_norm_noise_40%.pkl",
+        "data\\processed\\sets\\test_set_normal_noise_40%.csv"
+    output:
+        "models\\forest_40%_group",
+        "reports\\forest_40%_group.csv",
+        "models\\forest_40%_ID",
+        "reports\\forest_40%_ID.csv"
+    shell:
+        "python -m src.models.train_forest {input} {output}"
 rule cross_validation:
     input:
         "data\\processed\\sets\\test_set_normal_noise_40%.csv",
-        "models\\old_models\\DAE_norm_noise_40%.pkl"
+        "models\\DAE_norm_noise_40%.pkl"
     output:
         "reports\\cross_valid_40%_result.csv",
         "reports\\figures\\cross_valid_40%_result_group.png",
