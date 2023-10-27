@@ -25,6 +25,20 @@ def importance_analysis(model_path: str,
                         output_path_group_mz_features: str,
                         output_path_id_mz_features: str
                         ):
+    """Поиск важных для класификации фичей (классификация и по группам, и по штаммам).
+     Сначала ищем важные фичи в скрытом сотоянии (через индекс gini, берем топ 10) потом нахожу максималные веса, ведущие в
+     соответствующие этим фичам нейроны между внутренними слоями. На первом слое, среди весов,
+     ищу выбросы по формуле из статьи nature (см. отчет)
+    :param model_path: откуда берем автоенкодер
+    :param data_path: откуда берем сэт
+    :param forest_group_path: откуда берем лес для групп
+    :param forest_id_path: откуда берем лес для штаммов
+    :param output_path_forest_group_importances: куда сохраним график "важностей" каждой из фичей в лесу для групп
+    :param output_path_forest_id_importances: куда сохраним график "важностей" каждой из фичей в лесу для штаммов
+    :param output_path_group_mz_features: куда сохраним важные, для классификации по группам, пики в исходных профилях
+    :param output_path_шв_mz_features: куда сохраним важные, для классификации по штаммам, пики в исходных профилях
+    :return:
+    """
     attributes = ['group', 'ID']
     paths = pd.DataFrame([[forest_group_path, output_path_forest_group_importances, output_path_group_mz_features],
                           [forest_id_path, output_path_forest_id_importances, output_path_id_mz_features]],

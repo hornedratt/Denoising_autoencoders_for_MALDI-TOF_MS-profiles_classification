@@ -12,7 +12,11 @@ rule all:
         "models\\forest_40%_group",
         "reports\\forest_40%_group.csv",
         "models\\forest_40%_ID",
-        "reports\\forest_40%_ID.csv"
+        "reports\\forest_40%_ID.csv",
+        "reports\\figures\\forest_40%_importances_group.png",
+        "reports\\figures\\forest_40%_importances_ID.png",
+        "reports\\mz_features_40%_group.txt",
+        "reports\\mz_features_40%_ID.txt"
 rule make_original_profiles_csv:
     input:
         "data\\raw"
@@ -32,7 +36,7 @@ rule train_autoencoder:
         'models\\DAE_norm_noise_40%.pkl',
         'reports\\figures\\DAE_norm_noise_40%.png'
     shell:
-        "python -m src.models.train {output} --n_epochs 2"
+        "python -m src.models.train {output}" #--n_epochs 2"
 rule heat_map:
     input:
         "models\\DAE_norm_noise_40%.pkl",
@@ -67,10 +71,10 @@ rule cross_validation:
 rule importance_analysis:
     input:
         "data\\processed\\sets\\test_set_normal_noise_40%.csv",
-        "models\\DAE_norm_noise_40%.pkl"
-    output:
+        "models\\DAE_norm_noise_40%.pkl",
         "models\\forest_40%_group",
-        "models\\forest_40%_ID",
+        "models\\forest_40%_ID"
+    output:
         "reports\\figures\\forest_40%_importances_group.png",
         "reports\\figures\\forest_40%_importances_ID.png",
         "reports\\mz_features_40%_group.txt",
