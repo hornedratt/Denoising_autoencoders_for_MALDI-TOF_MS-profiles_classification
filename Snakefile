@@ -63,3 +63,17 @@ rule cross_validation:
         "reports\\figures\\cross_valid_40%_result_ID.png"
     shell:
         "python -m src.models.cross_valid {input} {output}"
+
+rule importance_analysis:
+    input:
+        "data\\processed\\sets\\test_set_normal_noise_40%.csv",
+        "models\\DAE_norm_noise_40%.pkl"
+    output:
+        "models\\forest_40%_group",
+        "models\\forest_40%_ID",
+        "reports\\figures\\forest_40%_importances_group.png",
+        "reports\\figures\\forest_40%_importances_ID.png",
+        "reports\\mz_features_40%_group.txt",
+        "reports\\mz_features_40%_ID.txt"
+    shell:
+        "python -m src.features.importance_analysis {input} {output}"
