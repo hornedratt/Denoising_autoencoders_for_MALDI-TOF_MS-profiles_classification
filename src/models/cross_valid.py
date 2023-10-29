@@ -20,7 +20,7 @@ from src.data.CustomDataSet import CustomDataSet
 @click.argument("output_path_hist_g", type=click.Path())
 @click.argument("output_path_hist_i", type=click.Path())
 @click.option("--train_size", default=0.7, type=float)
-@click.option("--amount", default=10, type=int)
+@click.option("--amount", default=100, type=int)
 def cross_valid(data_path: str,
                 model_path: str,
                 output_path_csv: str,
