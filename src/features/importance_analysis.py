@@ -51,10 +51,8 @@ def importance_analysis(model_path: str,
 
         device = torch.device('cpu')
 
-        valid_set = pd.read_csv(data_path, sep=';')
-        valid_set = CustomDataSet(valid_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
-                                  valid_set['group'],
-                                  valid_set['ID'])
+        with open(data_path, 'rb') as file:
+            valid_set = pickle.load(file)
 
         autoencoder = torch.load(model_path).to(device)
         valid_set.profile = autoencoder(valid_set.profile)

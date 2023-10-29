@@ -3,16 +3,20 @@ import pandas as pd
 import numpy as np
 import pickle
 import click
-import matplotlib.pyplot as plt
 import os
 from typing import List
 import progressbar as pb
 
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.ensemble import RandomForestClassifier
 
 from src.data.CustomDataSet import CustomDataSet
+
+@click.command()
+@click.argument("output_path_acc_group", type=click.Path())
+@click.argument("output_path_acc_id", type=click.Path())
+@click.argument("output_path_f1_group", type=click.Path())
+@click.argument("output_path_f1_id", type=click.Path())
+@click.option("--noises", default=[40], type=List[int])
 def confusion_noise(output_path_acc_group: str,
                     output_path_acc_id: str,
                     output_path_f1_group: str,
@@ -40,10 +44,8 @@ def confusion_noise(output_path_acc_group: str,
 
         autoencoder = torch.load(os.path.join("..", "..", f"models\\DAE_norm_noise_{i}%.pkl")).to(device)
         for j in noises:
-            valid_set = pd.read_csv(os.path.join("..", "..", f"data\\processed\\sets\\test_set_normal_noise_{i}%.csv"), sep=';')
-            valid_set = CustomDataSet(valid_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
-                                      valid_set['group'],
-                                      valid_set['ID'])
+            with open(os.path.join("..", "..", f"data\\processed\\sets\\test_normal_noise_{i}%.pkl"), 'rb') as file:
+                valid_set = pickle.load(file)
 
             valid_set.profile = autoencoder(valid_set.profile)
 
@@ -74,10 +76,12 @@ def confusion_noise(output_path_acc_group: str,
     confusion_noise_acc_id.to_csv(output_path_acc_id, sep=';', header=True, index=True)
     confusion_noise_f1_group.to_csv(output_path_f1_group, sep=';', header=True, index=True)
     confusion_noise_f1_id.to_csv(output_path_f1_id, sep=';', header=True, index=True)
-    return None
 
-confusion_noise(os.path.join("..", "..", "reports\\cross_noise_acc_group.csv"),
-                os.path.join("..", "..", "reports\\cross_noise_acc_ID.csv"),
-                os.path.join("..", "..", "reports\\cross_noise_f1_group.csv"),
-                os.path.join("..", "..", "reports\\cross_noise_f1_ID.csv"),
-                )
+if __name__ == "__main__":
+    confusion_noise()
+
+# confusion_noise(os.path.join("..", "..", "reports\\cross_noise_acc_group.csv"),
+#                 os.path.join("..", "..", "reports\\cross_noise_acc_ID.csv"),
+#                 os.path.join("..", "..", "reports\\cross_noise_f1_group.csv"),
+#                 os.path.join("..", "..", "reports\\cross_noise_f1_ID.csv"),
+#                 )

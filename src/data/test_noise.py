@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import progressbar as pb
 import click
+import pickle
+
+from src.data.CustomDataSet import CustomDataSet
 
 @click.command()
 @click.argument("input_path", type=click.Path())
@@ -44,7 +47,11 @@ def test_noise(input_path: str,
         final_tmp_pd['ID'] = main['ID']
         final_tmp_pd.columns = original_profiles.columns
         final = pd.concat([final, final_tmp_pd], axis=0)
-    final.to_csv(output_path, sep=';', index=False)
+    final = CustomDataSet(final.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
+                              final['group'],
+                              final['ID'])
+    with open(output_path, 'wb') as file:
+        pickle.dump(final, file)
 
 if __name__ == "__main__":
     test_noise()

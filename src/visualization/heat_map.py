@@ -3,14 +3,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import click
+import pickle
 
 from src.data.CustomDataSet import CustomDataSet
 
-@click.command()
-@click.argument("model_path", type=click.Path())
-@click.argument("data_path", type=click.Path())
-@click.argument("output_path_group", type=click.Path())
-@click.argument("output_path_id", type=click.Path())
+# @click.command()
+# @click.argument("model_path", type=click.Path())
+# @click.argument("data_path", type=click.Path())
+# @click.argument("output_path_group", type=click.Path())
+# @click.argument("output_path_id", type=click.Path())
 def heat_map(model_path: str,
              data_path: str,
              output_path_group: str,
@@ -30,17 +31,15 @@ def heat_map(model_path: str,
 
     device = torch.device('cpu')
 
-    valid_set = pd.read_csv(data_path, sep=';')
-    valid_set = CustomDataSet(valid_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
-                              valid_set['group'],
-                              valid_set['ID'])
+    with open(data_path, 'rb') as file:
+        valid_set = pickle.load(file)
 
     autoencoder = torch.load(model_path).to(device)
     valid_set.profile = autoencoder(valid_set.profile)
 
     embaddings_heat = pd.DataFrame(valid_set.profile.detach().numpy(), dtype=float)
-    embaddings_heat['group'] = valid_set.group
-    embaddings_heat['ID'] = valid_set.name
+    embaddings_heat['group'] = valid_set.group.T
+    embaddings_heat['ID'] = valid_set.name.T
     attributes = ['group', 'ID']
     for attribute in attributes:
         attribute_inversion = [atrr for atrr in attributes if atrr != attribute]
@@ -89,13 +88,14 @@ def heat_map(model_path: str,
         if attribute == 'ID':
             ax.set_title("карта расстояний между штаммами культур")
             plt.savefig(output_path_id)
+        return None
 
 
-if __name__ == "__main__":
-    heat_map()
+# if __name__ == "__main__":
+#     heat_map()
 
-# heat_map("..\\..\\models\\DAE_norm_noise_40%.pkl",
-#         "..\\..\\data\\processed\\sets\\test_set_normal_noise_40%.csv",
-#         "..\\..\\reports\\figures\\heat_map_group_40%.png",
-#         "..\\..\\reports\\figures\\heat_map_ID_40%.png"
-#          )
+heat_map("..\\..\\models\\DAE_norm_noise_40%.pkl",
+        "..\\..\\data\\processed\\sets\\set_normal_noise_40%.pkl",
+        "..\\..\\reports\\figures\\heat_map_group_40%.png",
+        "..\\..\\reports\\figures\\heat_map_ID_40%.png"
+         )
