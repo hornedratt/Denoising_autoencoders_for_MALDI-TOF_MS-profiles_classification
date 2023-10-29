@@ -7,11 +7,11 @@ import pickle
 
 from src.data.CustomDataSet import CustomDataSet
 
-# @click.command()
-# @click.argument("model_path", type=click.Path())
-# @click.argument("data_path", type=click.Path())
-# @click.argument("output_path_group", type=click.Path())
-# @click.argument("output_path_id", type=click.Path())
+@click.command()
+@click.argument("model_path", type=click.Path())
+@click.argument("data_path", type=click.Path())
+@click.argument("output_path_group", type=click.Path())
+@click.argument("output_path_id", type=click.Path())
 def heat_map(model_path: str,
              data_path: str,
              output_path_group: str,
@@ -88,14 +88,14 @@ def heat_map(model_path: str,
         if attribute == 'ID':
             ax.set_title("карта расстояний между штаммами культур")
             plt.savefig(output_path_id)
-        return None
+        # return None
 
 
-# if __name__ == "__main__":
-#     heat_map()
+if __name__ == "__main__":
+    heat_map()
 
-heat_map("..\\..\\models\\DAE_norm_noise_40%.pkl",
-        "..\\..\\data\\processed\\sets\\set_normal_noise_40%.pkl",
-        "..\\..\\reports\\figures\\heat_map_group_40%.png",
-        "..\\..\\reports\\figures\\heat_map_ID_40%.png"
-         )
+# heat_map("..\\..\\models\\DAE_norm_noise_40%.pkl",
+#         "..\\..\\data\\processed\\sets\\set_normal_noise_40%.pkl",
+#         "..\\..\\reports\\figures\\heat_map_group_40%.png",
+#         "..\\..\\reports\\figures\\heat_map_ID_40%.png"
+#          )
