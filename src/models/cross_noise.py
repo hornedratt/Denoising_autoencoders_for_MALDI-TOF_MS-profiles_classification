@@ -22,6 +22,15 @@ def confusion_noise(output_path_acc_group: str,
                     output_path_f1_group: str,
                     output_path_f1_id: str,
                     noises: List[int]=[40]):
+    """ Строит матрицы для точностей и f1-мер при классификаций по группам/штаммам профилей с разным уровнем шумма с помощью
+    моделей обученных на разных уровнях шума: строки отвечают за уровень шума при обучении (Train Noise), а столюцы на уровень
+    шума на входе (Input Noise).
+    :param output_path_acc_group: куда сохраним матрицу с точностями при  классификации по группам
+    :param output_path_acc_id: куда сохраним матрицу с точностями при  классификации по штаммам
+    :param output_path_f1_group: куда сохраним матрицу с f1-мерами при  классификации по группам
+    :param output_path_acc_id: куда сохраним матрицу с f1-мерами при  классификации по штаммам
+    :param noises: набор уровней шума для которых у нас есть тестовые наборы профилей и модели (определяется snakefile)
+    """
     confusion_noise_group = pd.DataFrame(np.zeros((len(noises), len(noises))),
                                          columns=pd.MultiIndex.from_tuples(
                                              [('Input Noise', str(col) + "%") for col in noises]),
@@ -36,15 +45,15 @@ def confusion_noise(output_path_acc_group: str,
 
     for i in pb.progressbar(noises):
 
-        with open(os.path.join("..", "..", f"models\\forest_{i}%_group"), 'rb') as f:
+        with open(os.path.join(f"models\\forest_{i}%_group"), 'rb') as f:
             classifier_group = pickle.load(f)
 
-        with open(os.path.join("..", "..", f"models\\forest_{i}%_ID"), 'rb') as f:
+        with open(os.path.join(f"models\\forest_{i}%_ID"), 'rb') as f:
             classifier_id = pickle.load(f)
 
-        autoencoder = torch.load(os.path.join("..", "..", f"models\\DAE_norm_noise_{i}%.pkl")).to(device)
+        autoencoder = torch.load(os.path.join(f"models\\DAE_norm_noise_{i}%.pkl")).to(device)
         for j in noises:
-            with open(os.path.join("..", "..", f"data\\processed\\sets\\test_normal_noise_{i}%.pkl"), 'rb') as file:
+            with open(os.path.join(f"data\\processed\\sets\\test_normal_noise_{i}%.pkl"), 'rb') as file:
                 valid_set = pickle.load(file)
 
             valid_set.profile = autoencoder(valid_set.profile)
