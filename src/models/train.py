@@ -72,7 +72,7 @@ def train_autoencoder(output_path_model: str,
     train_loader = DataLoader(train_set,
                               batch_size=batch_size,
                               collate_fn=lambda batch: collate_fn(batch, noise_factor=noise_factor),
-                              shuffle=False)
+                              shuffle=True)
 
     valid_set = CustomDataSet(valid_set.drop('group', axis=1).drop('ID', axis=1).to_numpy(dtype=float),
                               valid_set['group'],
@@ -81,8 +81,7 @@ def train_autoencoder(output_path_model: str,
     valid_loader = DataLoader(valid_set,
                                batch_size=batch_size,
                                collate_fn=lambda batch: collate_fn(batch, noise_factor=noise_factor),
-                               shuffle=False)
-
+                               shuffle=True)
     train_losses_per_epoch = []
     val_losses_per_epoch = []
 
