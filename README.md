@@ -57,9 +57,9 @@ $$C_n = |C_o + \xi|, \xi \in N(0, \sigma * d)$$
 <img src='reports/figures/forest_40%_importances_group.png' width=420>
  после чего по самым большим весам кодера идем до его входного слоя, на котором,через веса $\omega_{j d}$, ищутся самые важные фичи для классификации уже в исходном пространстве, по формуле:
  
-$$
+$
 \omega_{j k}^{(1)}-\operatorname{mean}\left(\omega_{j d}^{(1)}\right)>\beta * \operatorname{std}\left(\omega_{j d}^{(1)}\right)
-$$
+$
 
 т. е. согласно этой формуле k-ая фича - является важной. Здесь \beta - гиперпараметр, который подбирался так, чтобы мы находили ~ 150 важных фичей. Номера этих фичей лежат в reports/mz_features_40%_group.txt
 ### Cross noise
