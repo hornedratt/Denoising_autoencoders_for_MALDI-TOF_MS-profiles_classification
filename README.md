@@ -16,10 +16,16 @@ $$C_n = |C_o + \xi|, \xi \in N(0, \sigma * d)$$
 
 ### Обучение DAE
  Vanilla autoencoder - полносвязный автоенкодер. По умолчанию количество эпох - 50. В методе train строиться график функции потерь от эпохи на train и valid выборках:
-<img src='reports/figures/DAE_norm_noise_40%.png' width=320>
+<p align="center">
+ <img src='reports/figures/DAE_norm_noise_40%25.png' width=320>
+</p>
  Также, в пайплайне строиться heat map,для разбиения по группам и штаммам, соответственно:
-<img src='reports/figures/heat_map_group_40%.png' width=420>
-<img src='reports/figures/heat_map_id_40%.png' width=420>
+<p align="center">
+ <img src='reports/figures/heat_map_group_40%25.png' width=420>
+</p>
+<p align="center">
+ <img src='reports/figures/heat_map_id_40%25.png' width=420>
+</p>
  Каждая точка в heatmap - евклидово расстояние между средними групп/штаммов, на диагонали стоят среднегрупповые/среднештаммовые расстояния. Так как строики/столбцы у каждой группы/штамма хорошо различимы и минимальные значения стоят на диагоналях, можно предположить, что полученное скрытое пространство хорошо подходит для дальнейшего решения задачи классификации.
  
  ### Обучение случайного леса
@@ -52,9 +58,13 @@ $$C_n = |C_o + \xi|, \xi \in N(0, \sigma * d)$$
 | weighted avg                |    0.997986 | 0.997967 |   0.997964 | 492        |
   
    Также, в пайплайне строиться гистограмма точностей при кроссвалидации (по умолчанию валидируемся 1000 раз):
-<img src='reports/figures/cross_valid_40%_result_group.png' width=420>
+<p align="center">
+ <img src='reports/figures/cross_valid_40%25_result_group.png' width=420>
+</p>
  importance analysis, на основании критерия gini строит график наиболее важных для классификации фичей в скрытом состоянии(прмиер с группами, со штаммами есть аналогичный график):
-<img src='reports/figures/forest_40%_importances_group.png' width=420>
+<p align="center">
+ <img src='reports/figures/forest_40%25_importances_group.png' width=420>
+</p>
  после чего по самым большим весам кодера идем до его входного слоя, на котором,через веса $\omega_{j d}$, ищутся самые важные фичи для классификации уже в исходном пространстве, по формуле:
  
 $
