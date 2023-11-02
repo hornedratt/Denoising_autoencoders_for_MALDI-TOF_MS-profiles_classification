@@ -1,0 +1,24 @@
+,precision,recall,f1-score,support
+Anoxybacillus_flavithermus,1.0,1.0,1.0,6.0
+Bacillus_altitudinis,1.0,1.0,1.0,66.0
+Bacillus_aryabhattai,1.0,1.0,1.0,8.0
+Bacillus_atrophaeus,1.0,1.0,1.0,19.0
+Bacillus_berkeleyi,1.0,1.0,1.0,4.0
+Bacillus_cereus,1.0,1.0,1.0,46.0
+Bacillus_chungangenis,1.0,1.0,1.0,8.0
+Bacillus_clausii,1.0,1.0,1.0,6.0
+Bacillus_coagulans,1.0,1.0,1.0,3.0
+Bacillus_flexus,1.0,1.0,1.0,10.0
+Bacillus_licheniformis,1.0,1.0,1.0,76.0
+Bacillus_megaterium,1.0,1.0,1.0,45.0
+Bacillus_mycoides,1.0,1.0,1.0,7.0
+Bacillus_pumilus,1.0,1.0,1.0,106.0
+Bacillus_simplex,1.0,1.0,1.0,43.0
+Bacillus_subtilis,1.0,1.0,1.0,5.0
+Bacillus_thuringiensis,1.0,1.0,1.0,5.0
+Bacillus_weihenstephanensis,1.0,1.0,1.0,7.0
+E-Coli,1.0,1.0,1.0,8.0
+Geobacillus_subterraneus,1.0,1.0,1.0,14.0
+accuracy,1.0,1.0,1.0,1.0
+macro avg,1.0,1.0,1.0,492.0
+weighted avg,1.0,1.0,1.0,492.0

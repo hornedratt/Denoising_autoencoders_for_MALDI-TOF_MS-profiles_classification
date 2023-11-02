@@ -16,12 +16,12 @@ from src.data.CustomDataSet import CustomDataSet
 @click.argument("output_path_acc_id", type=click.Path())
 @click.argument("output_path_f1_group", type=click.Path())
 @click.argument("output_path_f1_id", type=click.Path())
-@click.option("--noises", default=[40], type=List[int])
+@click.argument("noises", type=str)
 def confusion_noise(output_path_acc_group: str,
                     output_path_acc_id: str,
                     output_path_f1_group: str,
                     output_path_f1_id: str,
-                    noises: List[int]=[40]):
+                    noises: str):
     """ Строит матрицы для точностей и f1-мер при классификаций по группам/штаммам профилей с разным уровнем шумма с помощью
     моделей обученных на разных уровнях шума: строки отвечают за уровень шума при обучении (Train Noise), а столюцы на уровень
     шума на входе (Input Noise).
@@ -31,6 +31,7 @@ def confusion_noise(output_path_acc_group: str,
     :param output_path_acc_id: куда сохраним матрицу с f1-мерами при  классификации по штаммам
     :param noises: набор уровней шума для которых у нас есть тестовые наборы профилей и модели (определяется snakefile)
     """
+    noises = list(map(int, noises.split(',')))
     confusion_noise_group = pd.DataFrame(np.zeros((len(noises), len(noises))),
                                          columns=pd.MultiIndex.from_tuples(
                                              [('Input Noise', str(col) + "%") for col in noises]),

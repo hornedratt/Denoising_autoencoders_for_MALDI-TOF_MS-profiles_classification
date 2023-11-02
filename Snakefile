@@ -95,7 +95,7 @@ rule cross_validation:
 
 rule importance_analysis:
     input:
-        "data\\processed\\sets\\set_normal_noise_{noise}%.pkl",
+        "data\\processed\\sets\\test_normal_noise_{noise}%.pkl",
         "models\\DAE_norm_noise_{noise}%.pkl",
         "models\\forest_{noise}%_group",
         "models\\forest_{noise}%_ID"
@@ -120,4 +120,4 @@ rule cross_noise:
         "reports\\cross_noise_f1_group.csv",
         "reports\\cross_noise_f1_ID.csv"
     shell:
-        "python -m src.models.cross_noise {output} --noises NOISES"
+        "python -m src.models.cross_noise {{output}} {noises}".format(noises=",".join(map(str, NOISES)))
