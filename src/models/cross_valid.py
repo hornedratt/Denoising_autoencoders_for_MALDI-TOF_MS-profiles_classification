@@ -51,8 +51,8 @@ def cross_valid(data_path: str,
         train_idx, test_idx = train_test_split(list(range(len(valid_set))),
                                                    train_size=train_size,
                                                    shuffle=True)
-        classifier_group = RandomForestClassifier()
-        classifier_ID = RandomForestClassifier()
+        classifier_group = RandomForestClassifier(n_estimators=10, min_samples_split=8, min_samples_leaf=4)
+        classifier_ID = RandomForestClassifier(n_estimators=10, min_samples_split=8, min_samples_leaf=4)
 
 #       тренируем очередной лес
         embaddings, group, id = valid_set.subset(train_idx)
