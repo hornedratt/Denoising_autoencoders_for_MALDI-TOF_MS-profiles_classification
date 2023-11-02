@@ -54,7 +54,7 @@ rule train_autoencoder:
     wildcard_constraints:
         noise="(10|20|30|40)"
     shell:
-        "python -m src.models.train {output}" #--n_epochs 2"
+        "python -m src.models.train {output} --noise_factor {wildcards.noise}"
 rule heat_map:
     input:
         "models\\DAE_norm_noise_{noise}%.pkl",

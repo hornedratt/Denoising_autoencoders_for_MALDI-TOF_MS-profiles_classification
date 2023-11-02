@@ -58,7 +58,7 @@ def train_forest(model_path: str,
     x_train = autoencoder(x_train).detach().numpy()
     x_test = autoencoder(x_test).detach().numpy()
 
-    classifier = RandomForestClassifier()
+    classifier = RandomForestClassifier(n_estimators=30, min_samples_split=6, min_samples_leaf=3)
     classifier.fit(x_train, y_train_group)
     y_pred = classifier.predict(x_test)
     classification_report_group = classification_report(y_test_group,
@@ -69,7 +69,7 @@ def train_forest(model_path: str,
     with open(output_path_group, 'wb') as f:
         pickle.dump(classifier, f)
 
-    classifier = RandomForestClassifier()
+    classifier = RandomForestClassifier(n_estimators=30, min_samples_split=6, min_samples_leaf=3)
     classifier.fit(x_train, y_train_id)
     y_pred = classifier.predict(x_test)
     classification_report_id = classification_report(y_test_id,
