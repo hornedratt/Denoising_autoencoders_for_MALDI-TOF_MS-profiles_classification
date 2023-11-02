@@ -24,6 +24,8 @@ rule all:
         [f"reports\\figures\\forest_{noise}%_importances_ID.png" for noise in NOISES],
         [f"reports\\mz_features_{noise}%_group.txt" for noise in NOISES],
         [f"reports\\mz_features_{noise}%_ID.txt" for noise in NOISES],
+        [f"reports\\figures\\cross_valid_{noise}%_result_group.png" for noise in NOISES],
+        [f"reports\\figures\\cross_valid_{noise}%_result_ID.png" for noise in NOISES],
 
 #       отчеты о использовании разных наборов данных с моделями, обученными на
 #       разных наборах
@@ -91,7 +93,7 @@ rule cross_validation:
     wildcard_constraints:
         noise="(10|20|30|40)"
     shell:
-        "python -m src.models.cross_valid {input} {output}"
+        "python -m src.models.cross_valid {input} {output} --amount 1000"
 
 rule importance_analysis:
     input:
