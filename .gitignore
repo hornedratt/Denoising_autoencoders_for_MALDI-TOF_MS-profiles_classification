@@ -89,6 +89,5 @@ target/
 .mypy_cache/
 
 # previous datasets
-data/raw/MS_profiles
-data/processed/sets
+data
 models/old_models
