@@ -24,6 +24,7 @@ rule all:
         [f"reports\\figures\\forest_{noise}%_importances_ID.png" for noise in NOISES],
         [f"reports\\mz_features_{noise}%_group.txt" for noise in NOISES],
         [f"reports\\mz_features_{noise}%_ID.txt" for noise in NOISES],
+        [f"reports\\cross_valid_{noise}%_result.csv" for noise in NOISES],
         [f"reports\\figures\\cross_valid_{noise}%_result_group.png" for noise in NOISES],
         [f"reports\\figures\\cross_valid_{noise}%_result_ID.png" for noise in NOISES],
 
