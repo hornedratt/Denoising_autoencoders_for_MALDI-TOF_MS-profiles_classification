@@ -16,10 +16,10 @@ $$C_n = |C_o + \xi|, \xi \in N(0, \sigma * d)$$
 
 ### Обучение DAE
  Vanilla autoencoder - полносвязный автоенкодер. По умолчанию количество эпох - 50. В методе train строиться график функции потерь от эпохи на train и valid выборках:
-<img src='reports/figures/DAE_norm_noise_40%.png' width=320>
+<img src='reports/figures/DAE_norm_noise_40%25.png' width=320>
  Также, в пайплайне строиться heat map,для разбиения по группам и штаммам, соответственно:
-<img src='reports/figures/heat_map_group_40%.png' width=420>
-<img src='reports/figures/heat_map_id_40%.png' width=420>
+<img src='reports/figures/heat_map_group_40%25.png' width=420>
+<img src='reports/figures/heat_map_id_40%25.png' width=420>
  Каждая точка в heatmap - евклидово расстояние между средними групп/штаммов, на диагонали стоят среднегрупповые/среднештаммовые расстояния. Так как строики/столбцы у каждой группы/штамма хорошо различимы и минимальные значения стоят на диагоналях, можно предположить, что полученное скрытое пространство хорошо подходит для дальнейшего решения задачи классификации.
  
  ### Обучение случайного леса
